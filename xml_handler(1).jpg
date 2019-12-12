@@ -1,0 +1,53 @@
+import xml.sax
+
+
+class MovieHandler(xml.sax.ContentHandler):
+    def __init__(self):
+        self.to = ""
+        self.a_from = ""
+        self.heading = ""
+        self.body = ""
+
+    # Call when an element starts
+    def startElement(self, tag, attributes):
+        self.CurrentData = tag
+        if tag == "movie":
+            print("*****Movie*****")
+            title = attributes["title"]
+            print("Title:", title)
+
+    # Call when an elements ends
+    def endElement(self, tag):
+        if self.CurrentData == "to":
+            print("to:", self.to)
+        elif self.CurrentData == "from":
+            print("from:", self.a_from)
+        elif self.CurrentData == "heading":
+            print("heading:", self.heading)
+        elif self.CurrentData == "body":
+            print("body:", self.body)
+        self.CurrentData = ""
+
+    # Call when a character is read
+    def characters(self, content):
+        if self.CurrentData == "to":
+            self.to = content
+        elif self.CurrentData == "from":
+            self.a_from = content
+        elif self.CurrentData == "heading":
+            self.heading = content
+        elif self.CurrentData == "body":
+            self.body = content
+
+
+if __name__ == "__main__":
+    # create an XMLReader
+    parser = xml.sax.make_parser()
+    # turn off namepsaces
+    parser.setFeature(xml.sax.handler.feature_namespaces, 0)
+
+    # override the default ContextHandler
+    Handler = MovieHandler()
+    parser.setContentHandler(Handler)
+
+    parser.parse("example.xml")
